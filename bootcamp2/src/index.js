@@ -3,51 +3,46 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from "react-router-dom";
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-
-import { render } from 'react-dom';
+import { getDatabase } from 'firebase/database';  
 import { Provider } from 'react-redux';
-import { createStore, combineReducers, compose } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import {
   ReactReduxFirebaseProvider,
   firebaseReducer
 } from 'react-redux-firebase';
 
-// Firebase configuration
+
 const firebaseConfig = {
   apiKey: "AIzaSyAPeoHXmab_rl6-ilnG0JvijcJQea_g3Ng",
   authDomain: "bootcamp-part-2-c4c74.firebaseapp.com",
   projectId: "bootcamp-part-2-c4c74",
   storageBucket: "bootcamp-part-2-c4c74.firebasestorage.app",
   messagingSenderId: "800174203070",
-  appId: "1:800174203070:web:80050e7d4d5bbb5ab47eef"
+  appId: "1:800174203070:web:80050e7d4d5bbb5ab47eef",
+  databaseURL: "https://bootcamp-part-2-c4c74-default-rtdb.firebaseio.com/"
 };
 
-// Initialize Firebase (v9+ modular)
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);  // Example: Get Auth instance
+export const app = initializeApp(firebaseConfig);
+export const database = getDatabase(app);
+console.log('Database initialized:', database);
 
-// react-redux-firebase config
 const rrfConfig = {
   userProfile: 'users'
 }
 
-// Root reducer
 const rootReducer = combineReducers({
   firebase: firebaseReducer
 });
 
-const initialState = {};
-const store = createStore(rootReducer, initialState);
+const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
-// Pass Firebase app instance to RRF Provider
 const rrfProps = {
-  firebase: app,  // Use the initialized app instance
+  firebase: app,  
   config: rrfConfig,
-  dispatch: store.dispatch
+  dispatch: store.dispatch,
+  database
 };
 
-// React DOM rendering
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
