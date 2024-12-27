@@ -1,96 +1,10 @@
-// import React, { useState } from 'react';
-// import './CardViewer.css';
-// import { Link, useParams } from 'react-router-dom';
-// import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase';
-// import { connect } from 'react-redux';
-// import { compose } from 'redux';
-// import { database } from './index';
-// import { ref, get, push, update } from 'firebase/database';
-
-
-// const CardViewer = (props) => {
-//   const { deckId } = useParams(); // Using useParams to access deckId from URL
-//   const [currentIndex, setCurrentIndex] = useState(0);
-//   const [displayFront, setDisplayFront] = useState(true);
-
-//   const nextCard = () => {
-//     if (currentIndex < props.cards.length - 1) {
-//       setCurrentIndex(currentIndex + 1);
-//       setDisplayFront(true);
-//     }
-//   };
-
-//   const prevCard = () => {
-//     if (currentIndex > 0) {
-//       setCurrentIndex(currentIndex - 1);
-//       setDisplayFront(true);
-//     }
-//   };
-
-//   const flipCard = () => setDisplayFront(!displayFront);
-
-//   if (!isLoaded(props.cards)) {
-//     return <div>Loading...</div>;
-//   }
-
-//   if (isEmpty(props.cards)) {
-//     return <div>Page not found!</div>;
-//   }
-
-//   const card = props.cards[currentIndex][displayFront ? 'front' : 'back'];
-
-//   return (
-//     <div>
-//       <h2>{props.name}</h2>
-//       Card {currentIndex + 1} out of {props.cards.length}.
-//       <div className="card" onClick={flipCard}>
-//         {card}
-//       </div>
-//       <br />
-//       <button
-//         disabled={currentIndex === 0}
-//         onClick={prevCard}
-//       >
-//         Prev card
-//       </button>
-//       <button
-//         disabled={currentIndex === props.cards.length - 1}
-//         onClick={nextCard}
-//       >
-//         Next card
-//       </button>
-//       <hr />
-//       <Link to="/">Home</Link>
-//     </div>
-//   );
-// };
-
-// const mapStateToProps = (state, props) => {
-//   const deckRef = ref(database, `/flashcards/${props.deckId}`); 
-//   const deck = get(deckRef);
-//   const name = deck && deck.name;
-//   const cards = deck && deck.cards;
-//   return { cards: cards, name: name };
-// };
-
-// export default compose(
-//   firebaseConnect((props) => {
-//     const deckId = props.deckId;  // Using the deckId directly from props
-//     console.log(deckId);
-//     return [{ path: `/flashcards/${deckId}`, storeAs: deckId }];
-//   }),
-//   connect(mapStateToProps)
-// )(CardViewer);
-
-
 import React, { useState } from 'react';
 import './CardViewer.css';
 import { Link, useParams } from 'react-router-dom';
 import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase';
-import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { database } from './index';
-import { ref, get, child, push, update } from 'firebase/database';
+import { ref, get } from 'firebase/database';
 
 
 const CardViewer = () => {
@@ -142,20 +56,28 @@ const CardViewer = () => {
 
   return (
     <div>
-      <h2>{name}</h2>
-      Card {currentIndex + 1} out of {cards.length}.
-      <div className="card" onClick={flipCard}>
-        {card}
+      <h2 className='title'>{name}</h2>
+      <div className="text">
+        Card {currentIndex + 1} out of {cards.length}.
+      </div>
+      <div className='card-container'>
+        <div className="card" onClick={flipCard}>
+          {card}
+        </div>
       </div>
       <br />
-      <button disabled={currentIndex === 0} onClick={prevCard}>
-        Prev card
-      </button>
-      <button disabled={currentIndex === cards.length - 1} onClick={nextCard}>
-        Next card
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'center'}}>
+        <button disabled={currentIndex === 0} onClick={prevCard} className='aesthetic-button'>
+          Prev card
+        </button>
+        <button disabled={currentIndex === cards.length - 1} onClick={nextCard} className='aesthetic-button'>
+          Next card
+        </button>
+      </div>
       <hr />
-      <Link to="/">Home</Link>
+      <div style={{ display: 'flex', justifyContent: 'center'}}>
+        <Link to="/" className='aesthetic-button'>Home</Link>
+      </div>
     </div>
   );
 };

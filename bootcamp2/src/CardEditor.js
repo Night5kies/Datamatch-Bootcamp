@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './CardEditor.css';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { firebaseConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
-import { ref, set, push, update } from 'firebase/database';
+import { ref, push, update } from 'firebase/database';
 import { database } from './index';
 
 const CardEditor = (props) => {
@@ -15,7 +15,6 @@ const CardEditor = (props) => {
   const [back, setBack] = useState('');
   const [name, setName] = useState('');
 
-  const { id } = useParams();  // Access route params if needed
   const navigate = useNavigate();  // For programmatic navigation
 
   const addCard = () => {
@@ -46,18 +45,19 @@ const CardEditor = (props) => {
 
   return (
     <div>
-      <h2>Card Editor</h2>
-      <div>
+      <h2 className='title'>Card Editor</h2>
+      <div className='text'>
         Deck name:{' '}
         <input
           name="name"
           onChange={(e) => setName(e.target.value)}
           placeholder="Name of deck"
+          className='aesthetic-input'
           value={name}
         />
       </div>
       <br />
-      <table>
+      <table className='aesthetic-table'>
         <thead>
           <tr>
             <th>Front</th>
@@ -68,40 +68,48 @@ const CardEditor = (props) => {
         <tbody>
           {cards.map((card, index) => (
             <tr key={index}>
-              <td>{card.front}</td>
-              <td>{card.back}</td>
+              <td className='regular-text'>{card.front}</td>
+              <td className='regular-text'>{card.back}</td>
               <td>
-                <button onClick={() => deleteCard(index)}>Delete card</button>
+                <button onClick={() => deleteCard(index)} className='aesthetic-button'>Delete card</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <br />
-      <input
-        name="front"
-        onChange={(e) => setFront(e.target.value)}
-        placeholder="Front of card"
-        value={front}
-      />
-      <input
-        name="back"
-        onChange={(e) => setBack(e.target.value)}
-        placeholder="Back of card"
-        value={back}
-      />
-      <button onClick={addCard}>Add card</button>
+      <div style={{ display: 'flex' , alignContent: 'center', justifyContent: 'center'}}>
+        <input
+          name="front"
+          onChange={(e) => setFront(e.target.value)}
+          placeholder="Front of card"
+          className='aesthetic-input'
+          value={front}
+          />
+        <input
+          name="back"
+          onChange={(e) => setBack(e.target.value)}
+          placeholder="Back of card"
+          className='aesthetic-input'
+          value={back}
+          />
+      </div>
+      <div style={{ display: 'flex' , alignContent: 'center', justifyContent: 'center', marginTop: '10px'}}>
+        <button onClick={addCard} className='aesthetic-button'>Add card</button>
+      </div>
       <hr />
-      <div>
+      <div style={{ display: 'flex' , alignContent: 'center', justifyContent: 'center', marginTop: '10px'}}>
         <button
           disabled={!name.trim() || cards.length === 0}
           onClick={createDeck}
+          className='aesthetic-button'
+          style={{ margin: '10px' }}
         >
           Create deck
         </button>
+        <Link to="/" className='aesthetic-button' style={{ margin: '10px' }}>Home</Link>
       </div>
       <br />
-      <Link to="/">Home</Link>
     </div>
   );
 };
@@ -109,117 +117,3 @@ const CardEditor = (props) => {
 export default compose(firebaseConnect())(CardEditor);
 
 
-
-// class CardEditor extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       cards: [
-//         { front: 'front1', back: 'back1' },
-//         { front: 'front2', back: 'back2' },
-//       ],
-//       front: '',
-//       back: '',
-//       name: '',
-//     };
-//   }
-
-  
-
-//   addCard = () => {
-//     if (!this.state.front.trim() || !this.state.back.trim()) {
-//       alert('Cannot add empty card');
-//       return;
-//     }
-
-//     const newCard = { front: this.state.front, back: this.state.back };
-//     const cards = this.state.cards.slice().concat(newCard);
-//     this.setState({ cards, front: '', back: '' });
-//   };
-
-//   deleteCard = index => {
-//     const cards = this.state.cards.slice();
-//     cards.splice(index, 1);
-//     this.setState({ cards });
-//   };
-
-//   handleChange = event =>
-//     this.setState({ [event.target.name]: event.target.value });
-
-//   createDeck = () => {
-//     const deckId = this.props.firebase.push('/flashcards').key;
-//     const updates = {};
-//     const newDeck = { cards: this.state.cards, name: this.state.name };
-//     updates[`/flashcards/${deckId}`] = newDeck;
-//     updates[`/homepage/${deckId}`] = { name: this.state.name };
-//     const onComplete = () => this.props.history.push(`/viewer/${deckId}`);
-//     this.props.firebase.update('/', updates, onComplete);
-//   };
-
-//   render() {
-//     const cards = this.state.cards.map((card, index) => {
-//       return (
-//         <tr key={index}>
-//           <td>{card.front}</td>
-//           <td>{card.back}</td>
-//           <td>
-//             <button onClick={() => this.deleteCard(index)}>Delete card</button>
-//           </td>
-//         </tr>
-//       );
-//     });
-
-//     return (
-//       <div>
-//         <h2>Card Editor</h2>
-//         <div>
-//           Deck name:{' '}
-//           <input
-//             name="name"
-//             onChange={this.handleChange}
-//             placeholder="Name of deck"
-//             value={this.state.name}
-//           />
-//         </div>
-//         <br />
-//         <table>
-//           <thead>
-//             <tr>
-//               <th>Front</th>
-//               <th>Back</th>
-//               <th>Delete</th>
-//             </tr>
-//           </thead>
-//           <tbody>{cards}</tbody>
-//         </table>
-//         <br />
-//         <input
-//           name="front"
-//           onChange={this.handleChange}
-//           placeholder="Front of card"
-//           value={this.state.front}
-//         />
-//         <input
-//           name="back"
-//           onChange={this.handleChange}
-//           placeholder="Back of card"
-//           value={this.state.back}
-//         />
-//         <button onClick={this.addCard}>Add card</button>
-//         <hr />
-//         <div>
-//           <button
-//             disabled={!this.state.name.trim() || this.state.cards.length === 0}
-//             onClick={this.createDeck}
-//           >
-//             Create deck
-//           </button>
-//         </div>
-//         <br />
-//         <Link to="/">Home</Link>
-//       </div>
-//     );
-//   }
-// }
-
-// export default compose(firebaseConnect())(CardEditor);
